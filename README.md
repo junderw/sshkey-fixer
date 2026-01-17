@@ -4,7 +4,7 @@ A command-line utility written in Rust that modifies SSH security key files by s
 
 ## Overview
 
-There was an issue in openssh when using `ssh-keygen -K` to output the ssh key files for security keys. It turns out that UV REQ flag was not being properly output into the key file.
+There was an issue in openssh when using `ssh-keygen -K` to output the ssh key files for security keys. It turns out that UV REQ flag was not being properly output into the key file when the security key has internal user verification (like Yubikey BIO).
 
 https://github.com/Yubico/libfido2/discussions/926#discussioncomment-15523431
 
