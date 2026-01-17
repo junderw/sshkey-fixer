@@ -10,10 +10,6 @@ https://github.com/Yubico/libfido2/discussions/926#discussioncomment-15523431
 
 This discussion explains the issue. This tool will fix an affected key file by setting the UV REQ flag properly.
 
-It is a rough tool, and I needed to use unsafe to get around flags being private in the ssh-key crate.
-
-If it borks anything, you can always pop out a new key file with `ssh-keygen -K` again, so patching upstream to give myself access to 
-
 **Supported key types:**
 - `SkEd25519` (FIDO2 keys using Ed25519)
 - `SkEcdsaSha2NistP256` (FIDO2 keys using ECDSA P-256)
@@ -108,11 +104,7 @@ The UV_REQUIRED flag (0x04) is a single bit that indicates the security key requ
 
 ### Implementation Notes
 
-The tool uses unsafe Rust to locate and modify the flags field in the SSH key structures. This is necessary because:
-1. The `ssh-key` crate doesn't expose direct access to modify the flags field
-2. The flags field is an internal implementation detail
-3. A probe key with a sentinel value is used to find the correct memory offset in a type-safe manner
-4. This is not a serious project and is just cobbled together to fix a bug in openssh that outputs incorrect key files.
+This tool vendors the ssh-key crate and patches it to give us the ability to set the flag byte.
 
 ## Dependencies
 
@@ -136,7 +128,6 @@ The tool provides clear error messages for common issues:
 - **Password handling**: Passwords are read using `rpassword`, which disables terminal echo to prevent password visibility
 - **In-place modification**: The original file is modified directly - ensure you have backups
 - **Encryption preservation**: If a key was encrypted, it remains encrypted with the same passphrase after modification
-- **Memory safety**: Uses Rust's memory safety guarantees where possible, with minimal unsafe code for flag modification
 
 ## Building for Distribution
 
