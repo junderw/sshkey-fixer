@@ -1,0 +1,15 @@
+[package]
+name = "sshkey-fixer"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+base64 = "0.22.1"
+rand = "0.8"
+regex = "1.12.2"
+rpassword = "7.3"
+ssh-key = { version = "0.6.7", features = ["encryption"] }
+
+[patch.crates-io]
+ssh-key = { path = "./ssh-key" }
