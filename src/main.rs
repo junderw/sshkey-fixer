@@ -47,7 +47,7 @@ fn process_ssh_key(file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
         None
     };
 
-    let decrypted_key = if let Some(ref pass) = password {
+    let decrypted_key = if let Some(pass) = &password {
         pk.decrypt(pass)?
     } else {
         pk
@@ -83,7 +83,7 @@ fn prompt_password(prompt: &str) -> io::Result<String> {
     rpassword::read_password()
 }
 
-fn modify_key(mut key: PrivateKey) -> Result<PrivateKey, Box<dyn std::error::Error>> {
+fn modify_key(key: PrivateKey) -> Result<PrivateKey, Box<dyn std::error::Error>> {
     match key.key_data() {
         KeypairData::SkEd25519(sk_key) => {
             println!("Key type: SkEd25519");
@@ -102,9 +102,8 @@ fn modify_key(mut key: PrivateKey) -> Result<PrivateKey, Box<dyn std::error::Err
 
             // Rebuild the private key with modified data
             let new_key_data = KeypairData::SkEd25519(modified_sk);
-            key = PrivateKey::new(new_key_data, key.comment().to_string())?;
 
-            Ok(key)
+            Ok(PrivateKey::new(new_key_data, key.comment().to_string())?)
         }
         KeypairData::SkEcdsaSha2NistP256(sk_key) => {
             println!("Key type: SkEcdsaSha2NistP256");
@@ -120,14 +119,13 @@ fn modify_key(mut key: PrivateKey) -> Result<PrivateKey, Box<dyn std::error::Err
             println!("    New flags: 0x{:02X}", modified_sk.flags());
 
             let new_key_data = KeypairData::SkEcdsaSha2NistP256(modified_sk);
-            key = PrivateKey::new(new_key_data, key.comment().to_string())?;
 
-            Ok(key)
+            Ok(PrivateKey::new(new_key_data, key.comment().to_string())?)
         }
         other => {
             Err(format!(
-                "Unsupported key type: {:?}. This tool only supports SkEd25519 and SkEcdsaSha2NistP256 keys.",
-                other.algorithm()
+                "Unsupported key type: {}. This tool only supports SkEd25519 and SkEcdsaSha2NistP256 keys.",
+                other.algorithm()?
             ).into())
         }
     }
