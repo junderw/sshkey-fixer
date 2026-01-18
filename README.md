@@ -106,6 +106,8 @@ The UV_REQUIRED flag (0x04) is a single bit that indicates the security key requ
 
 This tool vendors the ssh-key crate and patches it to give us the ability to set the flag byte.
 
+`./verify-ssh-key-deps.sh` script will git clone the original repo and run `diff` on the folders.
+
 ## Dependencies
 
 - `ssh-key` (0.6.7) - SSH key parsing and handling with encryption support
