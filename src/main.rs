@@ -39,8 +39,7 @@ fn process_ssh_key(file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let file_contents = fs::read_to_string(file_path)?;
     let pk = PrivateKey::from_openssh(&file_contents)?;
 
-    let was_encrypted = pk.is_encrypted();
-    let password = if was_encrypted {
+    let password = if pk.is_encrypted() {
         println!("The private key is encrypted.");
         Some(prompt_password("Enter passphrase: ")?)
     } else {
@@ -57,10 +56,7 @@ fn process_ssh_key(file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let modified_key = modify_key(decrypted_key)?;
 
     // Re-encrypt if the original was encrypted, then save
-    let output = if was_encrypted {
-        let pass = password
-            .as_ref()
-            .expect("Password should exist for encrypted key");
+    let output = if let Some(pass) = &password {
         modified_key.encrypt(&mut rand::thread_rng(), pass)?
     } else {
         modified_key
