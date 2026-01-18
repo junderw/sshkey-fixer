@@ -113,8 +113,6 @@ This tool vendors the ssh-key crate and patches it to give us the ability to set
 - `ssh-key` (0.6.7) - SSH key parsing and handling with encryption support
 - `rpassword` (7.3+) - Hidden password input
 - `rand` (0.8) - Random number generation for encryption
-- `base64` (0.22.1) - Base64 encoding/decoding
-- `regex` (1.12.2) - Regular expressions (for potential future use)
 
 ## Error Handling
 
