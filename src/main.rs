@@ -66,7 +66,16 @@ fn process_ssh_key(file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
         modified_key
     };
 
-    let openssh_output = output.to_openssh(ssh_key::LineEnding::LF)?;
+    // Preserve original line endings
+    let line_ending = if file_contents.contains("\r\n") {
+        ssh_key::LineEnding::CRLF
+    } else if file_contents.contains("\r") {
+        ssh_key::LineEnding::CR
+    } else {
+        ssh_key::LineEnding::LF
+    };
+
+    let openssh_output = output.to_openssh(line_ending)?;
     fs::write(file_path, openssh_output.as_bytes())?;
 
     Ok(())
