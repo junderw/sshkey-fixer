@@ -660,6 +660,7 @@ dependencies = [
 [[package]]
 name = "ssh-cipher"
 version = "0.2.0"
+source = "git+https://github.com/junderw/RustCrypto-SSH.git?rev=57ced034d1a87853626695616545ce36d79c515e#57ced034d1a87853626695616545ce36d79c515e"
 dependencies = [
  "aes",
  "aes-gcm",
@@ -675,6 +676,7 @@ dependencies = [
 [[package]]
 name = "ssh-encoding"
 version = "0.2.0"
+source = "git+https://github.com/junderw/RustCrypto-SSH.git?rev=57ced034d1a87853626695616545ce36d79c515e#57ced034d1a87853626695616545ce36d79c515e"
 dependencies = [
  "base64ct",
  "pem-rfc7468",
@@ -684,6 +686,7 @@ dependencies = [
 [[package]]
 name = "ssh-key"
 version = "0.6.7"
+source = "git+https://github.com/junderw/RustCrypto-SSH.git?rev=57ced034d1a87853626695616545ce36d79c515e#57ced034d1a87853626695616545ce36d79c515e"
 dependencies = [
  "bcrypt-pbkdf",
  "p256",

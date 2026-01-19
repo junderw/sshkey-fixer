@@ -7,7 +7,12 @@ license = "MIT"
 [dependencies]
 rand = "0.8"
 rpassword = "7.3"
-ssh-key = { version = "0.6.7", features = ["encryption"] }
 
-[patch.crates-io]
-ssh-key = { path = "./ssh-key" }
+[dependencies.ssh-key]
+version = "=0.6.7"
+features = ["encryption"]
+git = "https://github.com/junderw/RustCrypto-SSH.git"
+rev = "57ced034d1a87853626695616545ce36d79c515e" # Branch ssh-key/v0.6.7-patch
+# This dependency is a patched version of the ssh-key crate to allow us to set flag bits
+# Verify the diff at:
+# https://github.com/RustCrypto/SSH/compare/ssh-key/v0.6.7...junderw:RustCrypto-SSH:57ced034d1a87853626695616545ce36d79c515e
