@@ -104,9 +104,12 @@ The UV_REQUIRED flag (0x04) is a single bit that indicates the security key requ
 
 ### Implementation Notes
 
-This tool vendors the ssh-key crate and patches it to give us the ability to set the flag byte.
+ssh-key dependency has been patched to include the ability to set flag bits.
+The git hash is directly written in the dependency in Cargo.toml.
 
-`./verify-ssh-key-deps.sh` script will git clone the original repo and run `diff` on the folders.
+See the diff here:
+
+https://github.com/RustCrypto/SSH/compare/ssh-key/v0.6.7...junderw:RustCrypto-SSH:57ced034d1a87853626695616545ce36d79c515e
 
 ## Dependencies
 
