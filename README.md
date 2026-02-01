@@ -1,6 +1,6 @@
 # SSH Key Fixer
 
-A command-line utility written in Rust that modifies SSH security key files by setting the UV (User Verification) REQUIRED flag for OpenSSH FIDO2/U2F keys.
+A command-line interactive utility written in Rust that allows you to view and toggle the User Presence (UP) and User Verification (UV) flags for OpenSSH FIDO2/U2F keys, then save the key with or without a password.
 
 ## Overview
 
@@ -8,7 +8,8 @@ There was an issue in openssh when using `ssh-keygen -K` to output the ssh key f
 
 https://github.com/Yubico/libfido2/discussions/926#discussioncomment-15523431
 
-This discussion explains the issue. This tool will fix an affected key file by setting the UV REQ flag properly.
+
+This discussion explains the issue. This tool lets you interactively view and set the UP and UV flags for an affected key file, then save it in-place with or without a password.
 
 **Supported key types:**
 - `SkEd25519` (FIDO2 keys using Ed25519)
@@ -16,12 +17,12 @@ This discussion explains the issue. This tool will fix an affected key file by s
 
 ## Features
 
+- ✅ Interactive terminal UI: see and toggle UP/UV flags as checkboxes
 - ✅ Supports both encrypted and unencrypted SSH keys
 - ✅ Hidden password input (uses `rpassword` crate) - passphrase won't show on terminal
-- ✅ Automatic re-encryption with original password if key was encrypted
+- ✅ Save with no password, same password, or new password
 - ✅ Non-destructive operation - modifies the file in-place
-- ✅ Checks if flag is already set - skips modification if unnecessary
-- ✅ Clear status messages about key type and modifications
+- ✅ UI updates in place (no scrolling)
 - ✅ Proper error handling and reporting
 
 ## Installation
@@ -48,51 +49,55 @@ sshkey-fixer <path-to-ssh-key-file>
 ### Example
 
 ```bash
-# Fix an unencrypted key
+# Edit an unencrypted key
 ./sshkey-fixer ~/.ssh/id_ecdsa_sk
 
-# Fix an encrypted key (you'll be prompted for the passphrase)
+# Edit an encrypted key (you'll be prompted for the passphrase)
 ./sshkey-fixer ~/.ssh/id_ed25519_sk
 ```
 
-### Workflow
+### Interactive Workflow
 
 1. **Load the key**: The tool reads the SSH private key file in OpenSSH format
 2. **Check encryption**: If the key is encrypted, you'll be prompted for the passphrase (input is hidden)
 3. **Decrypt** (if needed): The key is decrypted using the provided passphrase
-4. **Modify flag**: The UV_REQUIRED flag is set if not already present
-5. **Re-encrypt** (if needed): If the key was originally encrypted, it's re-encrypted with the same passphrase
-6. **Save**: The modified key is written back to the original file
+4. **Interactive menu**: The UI displays the current state of the UP and UV flags as checkboxes, and presents a menu:
+	- Toggle User Presence (UP)
+	- Toggle User Verification (UV)
+	- Save without password
+	- Save with same password (if originally encrypted)
+	- Save with new password
+	- Quit without saving
+5. **UI updates in place**: The screen is cleared and redrawn after each action, so only the current state is visible.
+6. **Save**: The modified key is written back to the original file with your chosen password option.
 
-## Output Examples
 
-### For Unencrypted Keys
+## UI Example
+
 ```
-The private key is not encrypted.
+SSH Key Flag Editor
+===================
+
+File: /home/user/.ssh/id_ed25519_sk
 Key type: SkEd25519
-Current flags: 0x21
-New flags: 0x25
-SSH key successfully modified.
+
+Current flags:
+	[O] User Presence (UP)
+	[ ] User Verification (UV)
+
+1. Toggle User Presence (UP)
+2. Toggle User Verification (UV)
+3. Save without password
+4. Save with same password
+5. Save with new password
+6. Quit without saving
+
+Toggled User Verification flag.
+
+Enter choice: 2
 ```
 
-### For Encrypted Keys
-```
-The private key is encrypted.
-Enter passphrase: 
-Key type: SkEd25519
-Current flags: 0x21
-New flags: 0x25
-SSH key successfully modified.
-```
-
-### When Flag is Already Set
-```
-The private key is not encrypted.
-Key type: SkEd25519
-Current flags: 0x25
-UV_REQUIRED flag is already set. No changes needed.
-SSH key successfully modified.
-```
+After each action, the UI is redrawn in place, so only the current state is visible.
 
 ## Technical Details
 
@@ -101,6 +106,12 @@ The UV_REQUIRED flag (0x04) is a single bit that indicates the security key requ
 - Ensuring the key cannot be used without physical interaction
 - Maintaining security policies that require user verification
 - Compatibility with systems that check for this flag
+
+### UP_REQUIRED Flag
+The UP_REQUIRED flag (0x01) is a single bit that indicates the security key requires user presence. This is important for:
+- Ensuring the key cannot be used without physical interaction (pressing the button)
+- Maintaining security policies that require explicit user confirmation
+- Preventing accidental or automated unauthorized use
 
 ### Implementation Notes
 

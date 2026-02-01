@@ -65,9 +65,13 @@ fn run_interactive(file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
         println!("1. Toggle User Presence (UP)");
         println!("2. Toggle User Verification (UV)");
         println!("3. Save without password");
-        if original_password.is_some() {
-            println!("4. Save with same password");
-        }
+        println!(
+            "4. Save with same password{}",
+            original_password
+                .as_ref()
+                .map(|_| "")
+                .unwrap_or(" (no password)")
+        );
         println!("5. Save with new password");
         println!("6. Quit without saving");
         println!();
@@ -97,7 +101,7 @@ fn run_interactive(file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
                 println!("SSH key saved without password.");
                 break;
             }
-            "4" if original_password.is_some() => {
+            "4" => {
                 save_key(
                     file_path,
                     &file_contents,
@@ -106,7 +110,13 @@ fn run_interactive(file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
                     original_password.as_deref(),
                 )?;
                 clear_screen();
-                println!("SSH key saved with same password.");
+                println!(
+                    "SSH key saved {}.",
+                    original_password
+                        .as_ref()
+                        .map(|_| "with same password")
+                        .unwrap_or("without password")
+                );
                 break;
             }
             "5" => {
