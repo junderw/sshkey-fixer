@@ -1,5 +1,13 @@
 # SSH Key Fixer
 
+## IMPORTANT
+
+v10.6 of openssh (to be released "in a few weeks" as of End of September 2026) will contain a fix for the issue that caused this project.
+
+This is the fix: https://github.com/openssh/openssh-portable/commit/e1d1c95160f75e50890fad446aa2f89216037a9f
+
+---
+
 A command-line interactive utility written in Rust that allows you to view and toggle the User Presence (UP) and User Verification (UV) flags for OpenSSH FIDO2/U2F keys, then save the key with or without a password.
 
 ## Overview
